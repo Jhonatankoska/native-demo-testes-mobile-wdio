@@ -28,6 +28,14 @@ jobs:
           script: |
             adb devices
             adb install android.wdio.native.app.v1.0.8.apk
+            
+            echo "Aguardando o app iniciar..."
+            until adb shell pidof com.wdiodemoapp > /dev/null; do
+              echo "Esperando o app..."
+              sleep 3
+            done
+            echo "App iniciado!"
+            
             npm test
 
       - name: Generate Allure Report

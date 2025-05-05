@@ -9,7 +9,7 @@ exports.config = {
   capabilities: [
     {
       platformName: "Android",
-      "appium:deviceName": "0069910737",
+      "appium:deviceName": "emulator-5554",
       "appium:platformVersion": "11.0",
       "appium:automationName": "UiAutomator2",
       "appium:appPackage": "com.wdiodemoapp",
