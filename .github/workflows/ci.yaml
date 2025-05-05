@@ -11,14 +11,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Install Dependencies
+      - name: Instala Dependencias
         run: npm install
 
-      - name: Install Appium CLI
+      - name: Instala Appium CLI
         run: |
           npm install -g appium
 
-      - name: Start Appium and wait for it to be ready
+      - name: Inicia o Appium Server
         run: |
             nohup appium > appium.log 2>&1 &
         
@@ -42,7 +42,7 @@ jobs:
         
       
 
-      - name: Download Android SDK tools
+      - name: Baixa o Android SDK e Executa os Testes
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
@@ -53,23 +53,22 @@ jobs:
             adb devices
             adb install android.wdio.native.app.v1.0.8.apk
             curl http://localhost:4723/status
+            npm test
 
-      - name: Tests
-        run: npm test
-      - name: Generate Allure Report
+      - name: Gera os Relatórios
         run: npx allure generate allure-results --clean -o allure-report
       - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report
-      - name: Upload Logs
+      - name: Salva Logs em Caso de Falha
         uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: logs
           path: logs
-      - name: Upload Screenshots
+      - name: Salva Screenshots em Caso de Falha
         uses: actions/upload-artifact@v4
         if: failure()
         with:
