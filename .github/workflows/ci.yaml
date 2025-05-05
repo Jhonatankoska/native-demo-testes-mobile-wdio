@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Instala Node.js
         uses: actions/setup-node@v3
@@ -60,18 +60,18 @@ jobs:
       - name: Gera os Relatórios
         run: npx allure generate allure-results --clean -o allure-report
       - name: Sobe relatorios de execução do Allure Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report
       - name: Salva Logs em Caso de Falha
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: logs
           path: logs
       - name: Salva Screenshots em Caso de Falha
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: screenshots
