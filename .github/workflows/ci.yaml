@@ -51,8 +51,9 @@ jobs:
           profile: pixel
           script: |
             adb devices
-            adb install android.wdio.native.app.v1.0.8.apk
+            adb install -r -d android.wdio.native.app.v1.0.8.apk
             curl http://localhost:4723/status
+            node test/utils/checkAppRunning.js
             npm test
 
       - name: Gera os Relatórios
