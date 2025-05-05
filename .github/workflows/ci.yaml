@@ -14,11 +14,28 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Start Appium Server
+      - name: Start Appium in background and wait for it to be ready
         run: |
           nohup appium > appium.log 2>&1 &
-          sleep 30 
-          curl http://localhost:4723/status
+          
+          echo "Esperando Appium iniciar..."
+          for i in {1..10}
+          do
+            if curl -s http://localhost:4723/status | grep -q "Appium"; then
+              echo "✅ Appium está pronto!"
+              break
+            else
+              echo "⏳ Tentativa $i: Appium ainda não está disponível..."
+              sleep 5
+            fi
+          done
+      
+          if ! curl -s http://localhost:4723/status | grep -q "Appium"; then
+            echo "❌ Appium não iniciou após várias tentativas. Log abaixo:"
+            cat appium.log
+            exit 1
+          fi
+      
 
       - name: Download Android SDK tools
         uses: reactivecircus/android-emulator-runner@v2
