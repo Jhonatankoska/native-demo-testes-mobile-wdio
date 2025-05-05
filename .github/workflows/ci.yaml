@@ -13,8 +13,12 @@ jobs:
           node-version: '18'
       - name: Install Dependencies
         run: npm install
+        
       - name: Start Appium Server
-        run: appium
+        run: |
+          nohup appium > appium.log 2>&1 &
+          sleep 10 
+          curl http://localhost:4723/status
 
       - name: Download Android SDK tools
         uses: reactivecircus/android-emulator-runner@v2
