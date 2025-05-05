@@ -8,14 +8,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: gradle
-
-
       - name: Instala Node.js
         uses: actions/setup-node@v3
         with:
@@ -62,7 +54,6 @@ jobs:
             adb devices
             adb install -r -d android.wdio.native.app.v1.0.8.apk
             curl http://localhost:4723/status
-            node test/utils/checkAppRunning.js
             npm test
 
       - name: Gera os Relatórios
