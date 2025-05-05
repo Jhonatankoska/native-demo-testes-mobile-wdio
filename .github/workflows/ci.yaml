@@ -1,0 +1,78 @@
+---
+name: CI
+'on': [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Instala Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Instala Dependencias
+        run: npm install
+
+      - name: Instalar Appium globalmente
+        run: |
+          npm install -g appium
+          appium driver list --installed
+
+      - name: Inicia o Appium Server
+        run: |
+            nohup appium > appium.log 2>&1 &
+        
+            echo "Esperando Appium iniciar..."
+            for i in {1..15}
+            do
+              if curl -s http://localhost:4723/status | jq '.value.ready' | grep -q true; then
+                echo "✅ Appium está pronto!"
+                break
+              else
+                echo "⏳ Tentativa $i: Appium ainda não está disponível..."
+                sleep 5
+              fi
+            done
+        
+            if ! curl -s http://localhost:4723/status | jq '.value.ready' | grep -q true; then
+              echo "❌ Appium não iniciou após várias tentativas. Log abaixo:"
+              cat appium.log
+              exit 1
+            fi
+        
+      
+
+      - name: Baixa o Android SDK e Executa os Testes
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: default
+          arch: x86_64
+          profile: pixel
+          script: |
+            adb devices
+            adb install -r -d android.wdio.native.app.v1.0.8.apk
+            curl http://localhost:4723/status
+            npm test
+
+      - name: Gera os Relatórios
+        run: npx allure generate allure-results --clean -o allure-report
+      - name: Sobe relatorios de execução do Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+      - name: Salva Logs em Caso de Falha
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: logs
+          path: logs
+      - name: Salva Screenshots em Caso de Falha
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshots
+          path: screenshots
