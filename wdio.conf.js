@@ -22,7 +22,7 @@ exports.config = {
     ], [
       "appium",
       {
-        logLevel: "error",
+        logLevel: "info",
       },
     ],
     [
@@ -59,7 +59,7 @@ exports.config = {
     },
   },
 
-  logLevel: "error",
+  logLevel: "info",
 
   bail: 0,
 
@@ -77,7 +77,7 @@ exports.config = {
       {
         outputDir: "allure-results",
         disableWebdriverStepsReporting: true,
-        disableWebdriverScreenshotsReporting: true,
+        disableWebdriverScreenshotsReporting: false,
       },
     ],
   ],
