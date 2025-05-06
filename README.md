@@ -4,6 +4,8 @@
 Este repositório contém a automação de testes para o aplicativo de demonstração `com.wdiodemoapp`, utilizando **WebdriverIO**, **Appium**, e **Allure Reports**. Os testes validam funcionalidades essenciais como login, cadastro, formulários, drag & drop e swipe em dispositivos Android.  
 Os testes são executados no **BrowserStack**, tanto localmente quanto via pipeline CI/CD, com geração de artefatos ao final da execução.
 
+**Link Público do BrowserStack:** https://observability.browserstack.com/projects/Your+project+name+goes+here/builds?public_token=85cfad9cbb2cab550c566ed0b19af193c44f8f0b7a1af99823145805e8321dd0
+
 ---
 
 ## Funcionalidades Automatizadas
