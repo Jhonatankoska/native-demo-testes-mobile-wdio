@@ -1,0 +1,62 @@
+name: Testes no BrowserStack com Allure Report
+
+'on': [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configura ambiente Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  
+
+      - name: Instala Dependencias
+        run: |
+          npm install
+
+
+      - name: Instala Allure-report
+        run: |
+          npm install -g allure-commandline --save-dev
+          
+      - name: Define as Credenciais do BrowserStack
+        env:
+            BROWSERSTACK_USERNAME: "jhonatancarvalho_jr9Pfu" 
+            BROWSERSTACK_ACCESS_KEY: "1V1grbsvKapopfq8b7Fc" 
+        run: |
+            echo "Setando as credenciais do BrowserStack ..."
+
+      - name: Execução dos Testes
+        run: |
+          npx wdio run wdio.conf.js --browserstack
+        
+
+      - name: Geração do Relatório do Allure
+        if: ${{ always() }}
+        run: |
+          allure generate --single-file allure-results
+       
+
+      - name: Salvando o Relatório do Allure Report no Artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+
+
+      - name: Salvando os Resultados dos Testes com BrowserStack
+        if: ${{ always() }}
+        run: |
+          curl -u $BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY \
+            -X POST \
+            -d "status=completed" \
+            -d "session_id=$BROWSERSTACK_SESSION_ID" \
+            https://api.browserstack.com/automate/sessions/${{ secrets.BROWSERSTACK_SESSION_ID }}.json
+
+
