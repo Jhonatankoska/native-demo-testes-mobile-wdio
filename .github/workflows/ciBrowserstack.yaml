@@ -10,45 +10,74 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Configura ambiente Node 18
         uses: actions/setup-node@v3
         with:
           node-version: '18'  
 
-      - name: Install dependencies
+      - name: Instala Dependencias
         run: |
           npm install
 
 
-      - name: Install Allure Commandline
+      - name: Instala Allure
         run: |
           npm install -g allure-commandline --save-dev
           
-      - name: Set up BrowserStack credentials
+      - name: Define as Credenciais do BrowserStack
         env:
             BROWSERSTACK_USERNAME: "jhonatancarvalho_jr9Pfu" 
             BROWSERSTACK_ACCESS_KEY: "1V1grbsvKapopfq8b7Fc" 
         run: |
-            echo "Setting up BrowserStack credentials..."
+            echo "Setando as credenciais do BrowserStack ..."
 
-      - name: Run tests
+      - name: Execução dos Testes
         run: |
           npx wdio run wdio.conf.js --browserstack
 
-      - name: Generate Allure Report
+      - name: Geração do Relatório do Allure
         run: |
           allure generate --single-file allure-results
 
-      - name: Upload Allure Report as artifact
+      - name: Salvando o Relatório do Allure Report no Artifact
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report
 
-      - name: Upload test results to BrowserStack
+      - name: Salvando os Resultados dos Testes com BrowserStack
         run: |
           curl -u $BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY \
             -X POST \
             -d "status=completed" \
             -d "session_id=$BROWSERSTACK_SESSION_ID" \
             https://api.browserstack.com/automate/sessions/${{ secrets.BROWSERSTACK_SESSION_ID }}.json
+
+      - name: Capturando os Videos e Screenshots do Browsertack
+        run: |
+              mkdir -p media-links
+              echo "BrowserStack Media Links" > media-links/links.txt
+    
+              while IFS=, read -r SESSION_ID TEST_NAME STATUS
+              do
+                echo "Processing $TEST_NAME ($SESSION_ID)"
+    
+                RESPONSE=$(curl -s -u $BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY \
+                  https://api.browserstack.com/automate/sessions/$SESSION_ID.json)
+    
+                VIDEO_URL=$(echo "$RESPONSE" | jq -r '.automation_session.video_url')
+                echo "- 🎥 Video for $TEST_NAME: $VIDEO_URL" >> media-links/links.txt
+    
+                if [ "$STATUS" = "failed" ]; then
+                  SCREENSHOT_URL=$(echo "$RESPONSE" | jq -r '.automation_session.public_url')
+                  echo "- 🖼️ Screenshot (if any): $SCREENSHOT_URL" >> media-links/links.txt
+                fi
+    
+                echo "" >> media-links/links.txt
+              done < browserstack-sessions.txt
+    
+      - name: Salvando os Links dos Videos e Screenshots no Artifact
+        uses: actions/upload-artifact@v3
+        with:
+              name: browserstack-media-links
+              path: media-links/links.txt

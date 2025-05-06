@@ -92,6 +92,14 @@ exports.config = {
     context,
     { error, result, duration, passed, retries }
   ) {
+    const sessionId = browser.sessionId;
+    const testName = test.title.replace(/\s+/g, '-').toLowerCase();
+    const fs = require('fs');
+    const logPath = './browserstack-sessions.txt';
+  
+    const logLine = `${sessionId},${testName},${passed ? 'passed' : 'failed'}\n`;
+  
+    fs.appendFileSync(logPath, logLine);
     if (!passed) {
       await browser.takeScreenshot();
     }
