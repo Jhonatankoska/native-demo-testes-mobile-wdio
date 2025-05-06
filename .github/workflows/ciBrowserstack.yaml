@@ -77,7 +77,7 @@ jobs:
               done < browserstack-sessions.txt
     
       - name: Salvando os Links dos Videos e Screenshots no Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
               name: browserstack-media-links
               path: media-links/links.txt
