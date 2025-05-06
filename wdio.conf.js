@@ -1,5 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+
 exports.config = {
- // port: 4723,
   specs: ["./test/specs/**/*.js"],
   exclude: [],
   hostname: 'hub.browserstack.com',
@@ -94,12 +96,13 @@ exports.config = {
   ) {
     const sessionId = browser.sessionId;
     const testName = test.title.replace(/\s+/g, '-').toLowerCase();
-    const fs = require('fs');
-    const logPath = './browserstack-sessions.txt';
+    const status = passed ? 'passed' : 'failed';
   
-    const logLine = `${sessionId},${testName},${passed ? 'passed' : 'failed'}\n`;
+    const logLine = `${sessionId},${testName},${status}\n`;
+    const logPath = path.join(process.cwd(), 'browserstack-sessions.txt');
   
     fs.appendFileSync(logPath, logLine);
+
     if (!passed) {
       await browser.takeScreenshot();
     }
