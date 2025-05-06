@@ -22,7 +22,7 @@ describe("Tela de Formulário", () => {
   });
 
   it("Deve selecionar a opção Appium is awesome no Dropdown", async () => {
-    await FormsPage.clicarDropdown("Erro is awesome");
+    await FormsPage.clicarDropdown("Appium is awesome");
     await FormsPage.validarOpcaoSelecionadaNoDropdown();
   });
 

@@ -1,6 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-
 exports.config = {
   specs: ["./test/specs/**/*.js"],
   exclude: [],
@@ -94,15 +91,7 @@ exports.config = {
     context,
     { error, result, duration, passed, retries }
   ) {
-    const sessionId = browser.sessionId;
-    const testName = test.title.replace(/\s+/g, '-').toLowerCase();
-    const status = passed ? 'passed' : 'failed';
-  
-    const logLine = `${sessionId},${testName},${status}\n`;
-    const logPath = path.join(process.cwd(), 'browserstack-sessions.txt');
-  
-    fs.appendFileSync(logPath, logLine);
-
+   
     if (!passed) {
       await browser.takeScreenshot();
     }
