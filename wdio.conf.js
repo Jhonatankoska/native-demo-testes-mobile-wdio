@@ -59,21 +59,6 @@ exports.config = {
     },
   },
 
-  /** 
-  capabilities: [
-    {
-      platformName: "Android",
-      "appium:deviceName": "emulator-5554",
-      "appium:platformVersion": "11.0",
-      "appium:automationName": "UiAutomator2",
-      "appium:appPackage": "com.wdiodemoapp",
-      "appium:appActivity": "com.wdiodemoapp.MainActivity",
-      "appium:noReset": true,
-      "appium:fullReset": false,
-    },
-  ],
-  */
-
   logLevel: "error",
 
   bail: 0,

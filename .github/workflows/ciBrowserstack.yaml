@@ -19,6 +19,11 @@ jobs:
         run: |
           npm install
 
+
+      - name: Install Allure Commandline
+        run: |
+          npm install -g allure-commandline --save-dev
+          
       - name: Set up BrowserStack credentials
         env:
             BROWSERSTACK_USERNAME: "jhonatancarvalho_jr9Pfu" 
