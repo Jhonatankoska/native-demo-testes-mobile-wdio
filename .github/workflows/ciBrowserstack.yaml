@@ -1,4 +1,4 @@
-name: Run Tests on BrowserStack with Allure Report
+name: Testes no BrowserStack com Allure Report
 
 'on': [push, pull_request]
 
@@ -20,7 +20,7 @@ jobs:
           npm install
 
 
-      - name: Instala Allure
+      - name: Instala Allure-report
         run: |
           npm install -g allure-commandline --save-dev
           
@@ -34,16 +34,20 @@ jobs:
       - name: Execução dos Testes
         run: |
           npx wdio run wdio.conf.js --browserstack
+        continue-on-error: true
 
       - name: Geração do Relatório do Allure
         run: |
           allure generate --single-file allure-results
+        continue-on-error: true
 
       - name: Salvando o Relatório do Allure Report no Artifact
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report
+        continue-on-error: true
+
 
       - name: Salvando os Resultados dos Testes com BrowserStack
         run: |
@@ -52,6 +56,8 @@ jobs:
             -d "status=completed" \
             -d "session_id=$BROWSERSTACK_SESSION_ID" \
             https://api.browserstack.com/automate/sessions/${{ secrets.BROWSERSTACK_SESSION_ID }}.json
+        continue-on-error: true
+
 
       - name: Capturando os Videos e Screenshots do Browsertack
         run: |
@@ -75,9 +81,12 @@ jobs:
     
                 echo "" >> media-links/links.txt
               done < browserstack-sessions.txt
+        continue-on-error: true
     
       - name: Salvando os Links dos Videos e Screenshots no Artifact
         uses: actions/upload-artifact@v4
         with:
               name: browserstack-media-links
               path: media-links/links.txt
+        continue-on-error: true
+

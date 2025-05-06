@@ -1,7 +1,7 @@
 import SwipePage from "../pageobjects/SwipePage";
 import HomePage from "../pageobjects/HomePage";
 
-describe("Tela Swipe", () => {
+describe("Tela de Swipe", () => {
   it("Deve deslizar horizontalmente para a esquerda até encontrar ultimo card do carousel", async () => {
     await HomePage.acessarSwipe();
     await SwipePage.deslizarHorizontal();
