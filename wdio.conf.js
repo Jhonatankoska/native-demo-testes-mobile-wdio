@@ -1,12 +1,65 @@
 exports.config = {
-  runner: "local",
-  port: 4723,
-  path: "/", 
+ // port: 4723,
   specs: ["./test/specs/**/*.js"],
   exclude: [],
+  hostname: 'hub.browserstack.com',
+
+  user: process.env.BROWSERSTACK_USERNAME || "jhonatancarvalho_jr9Pfu",
+  key: process.env.BROWSERSTACK_ACCESS_KEY || "1V1grbsvKapopfq8b7Fc",
+  services: [
+    [
+      "browserstack",
+      {
+        appiumVersion: "2.15.0",
+        testObservability: true,
+        testObservabilityOptions: {
+          projectName: "Your project name goes here",
+          buildName:
+            "The static build job name goes here e.g. Nightly regression",
+        },
+        browserstackLocal: false,
+      },
+    ], [
+      "appium",
+      {
+        logLevel: "error",
+      },
+    ],
+    [
+      "browserstack",
+      {
+        app: "bs://a1d2391fcd0ed85273be3739b2b2019063252c9c",
+      },
+    ],
+  ],
 
   maxInstances: 1,
 
+  capabilities: [
+    {
+      "bstack:options": {
+        deviceName: "Motorola Moto G71 5G",
+        platformVersion: "11.0",
+        platformName: "android",
+        appiumVersion: "2.15.0",
+
+
+      },
+    },
+  ],
+  commonCapabilities: {
+    "bstack:options": {
+      projectName: "BrowserStack Samples",
+      buildName: "browserstack build",
+      sessionName: "BStack parallel webdriverio-appium",
+      debug: true,
+      networkLogs: true,
+      percy: false,
+      appiumVersion: "2.15.0",
+    },
+  },
+
+  /** 
   capabilities: [
     {
       platformName: "Android",
@@ -19,6 +72,7 @@ exports.config = {
       "appium:fullReset": false,
     },
   ],
+  */
 
   logLevel: "error",
 
@@ -29,15 +83,6 @@ exports.config = {
   connectionRetryTimeout: 120000,
 
   connectionRetryCount: 3,
-
-  services: [
-    [
-      "appium",
-      {
-        logLevel: "error",
-      },
-    ],
-  ],
 
   framework: "mocha",
 

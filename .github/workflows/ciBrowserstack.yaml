@@ -1,0 +1,57 @@
+name: Run Tests on BrowserStack with Allure Report
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'  
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Set up BrowserStack credentials
+        env:
+            BROWSERSTACK_USERNAME: "jhonatancarvalho_jr9Pfu" 
+            BROWSERSTACK_ACCESS_KEY: "1V1grbsvKapopfq8b7Fc" 
+        run: |
+            echo "Setting up BrowserStack credentials..."
+
+      - name: Run tests
+        run: |
+          npx wdio run wdio.conf.js --browserstack
+
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure Report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Upload test results to BrowserStack
+        run: |
+          curl -u $BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY \
+            -X POST \
+            -d "status=completed" \
+            -d "session_id=$BROWSERSTACK_SESSION_ID" \
+            https://api.browserstack.com/automate/sessions/${{ secrets.BROWSERSTACK_SESSION_ID }}.json
