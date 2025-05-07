@@ -1,6 +1,6 @@
 name: Testes no BrowserStack com Allure Report
 
-'on': [push, pull_request]
+"on": [push, pull_request]
 
 jobs:
   test:
@@ -13,34 +13,34 @@ jobs:
       - name: Configura ambiente Node 18
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  
+          node-version: "18"
 
       - name: Instala Dependencias
         run: |
           npm install
 
-
       - name: Instala Allure-report
         run: |
           npm install -g allure-commandline --save-dev
-          
+
       - name: Define as Credenciais do BrowserStack
         env:
-            BROWSERSTACK_USERNAME: "jhonatancarvalho_jr9Pfu" 
-            BROWSERSTACK_ACCESS_KEY: "1V1grbsvKapopfq8b7Fc" 
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
-            echo "Setando as credenciais do BrowserStack ..."
+          echo "Credenciais do BrowserStack definidas com segurança."
 
       - name: Execução dos Testes
+        env:
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
           npx wdio run wdio.conf.js --browserstack
-        
 
       - name: Geração do Relatório do Allure
         if: ${{ always() }}
         run: |
           allure generate --single-file allure-results
-       
 
       - name: Salvando o Relatório do Allure Report no Artifact
         if: ${{ always() }}
@@ -48,7 +48,6 @@ jobs:
         with:
           name: allure-report
           path: allure-report
-
 
       - name: Salvando os Resultados dos Testes com BrowserStack
         if: ${{ always() }}
@@ -58,5 +57,3 @@ jobs:
             -d "status=completed" \
             -d "session_id=$BROWSERSTACK_SESSION_ID" \
             https://api.browserstack.com/automate/sessions/${{ secrets.BROWSERSTACK_SESSION_ID }}.json
-
-
